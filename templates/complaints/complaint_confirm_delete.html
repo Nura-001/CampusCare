@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Complaint - CampusCare{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1>Delete Complaint</h1>
+  <p>Are you sure you want to delete this complaint? This cannot be undone.</p>
+
+  <div class="card">
+    <p><strong>Title:</strong> {{ complaint.title }}</p>
+    <p><strong>Category:</strong> {{ complaint.category.name }}</p>
+    <p><strong>Location:</strong> {{ complaint.location }}</p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn">Yes, delete</button>
+    <a href="{% url 'complaints:detail' complaint.pk %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

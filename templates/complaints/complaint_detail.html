@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ complaint.title }} - CampusCare{% endblock %}
+
+{% block content %}
+<h1>{{ complaint.title }}</h1>
+
+<p>
+  <span class="badge badge-{{ complaint.status }}">{{ complaint.get_status_display }}</span>
+</p>
+
+{% if complaint.status == 'submitted' %}
+<p>
+  <a href="{% url 'complaints:edit' complaint.pk %}" class="btn">Edit</a>
+  <a href="{% url 'complaints:delete' complaint.pk %}" class="btn">Delete</a>
+</p>
+{% endif %}
+
+<div class="card">
+  <p><strong>Category:</strong> {{ complaint.category.name }}</p>
+  <p><strong>Location:</strong> {{ complaint.location }}</p>
+  <p><strong>Room number:</strong> {{ complaint.room_number|default:"-" }}</p>
+  <p><strong>Priority:</strong> {{ complaint.get_priority_display }}</p>
+  <p><strong>Assigned to:</strong> {{ complaint.assigned_to.username|default:"Not assigned yet" }}</p>
+  <p><strong>Submitted on:</strong> {{ complaint.created_at|date:"d M Y, h:i A" }}</p>
+  <p><strong>Last updated:</strong> {{ complaint.updated_at|date:"d M Y, h:i A" }}</p>
+  <p><strong>Description:</strong></p>
+  {{ complaint.description|linebreaks }}
+  {% if complaint.admin_remarks %}
+    <p><strong>Admin remarks:</strong></p>
+    {{ complaint.admin_remarks|linebreaks }}
+  {% endif %}
+</div>
+
+<h2>Status history</h2>
+
+{% if history %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>From</th>
+      <th>To</th>
+      <th>Changed by</th>
+      <th>Remarks</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in history %}
+    <tr>
+      <td>{{ item.changed_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ item.previous_status|default:"-" }}</td>
+      <td>{{ item.new_status }}</td>
+      <td>{{ item.changed_by.username|default:"-" }}</td>
+      <td>{{ item.remarks|default:"-" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No history yet.</p>
+{% endif %}
+
+<p><a href="{% url 'complaints:list' %}">Back to My Complaints</a></p>
+{% endblock %}

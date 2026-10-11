@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_edit %}Edit Complaint{% else %}Report a Problem{% endif %} - CampusCare{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1>{% if is_edit %}Edit Complaint{% else %}Report a Problem{% endif %}</h1>
+  <p>
+    {% if is_edit %}
+      Update the details below. You can edit only while the status is Submitted.
+    {% else %}
+      Fill in the details below. Our team will review your complaint.
+    {% endif %}
+  </p>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-error">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          <div class="field-error">{{ field.errors }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <button type="submit" class="btn">{% if is_edit %}Save Changes{% else %}Submit Complaint{% endif %}</button>
+    {% if is_edit %}
+      <a href="{% url 'complaints:detail' complaint.pk %}">Cancel</a>
+    {% else %}
+      <a href="{% url 'dashboard' %}">Cancel</a>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}

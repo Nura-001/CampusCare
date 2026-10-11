@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - CampusCare{% endblock %}
+
+{% block content %}
+<h1>Welcome, {{ request.user.profile.full_name|default:request.user.username }}</h1>
+<p>Here is a summary of your complaints.</p>
+
+<p><a href="{% url 'complaints:create' %}" class="btn">Report a Problem</a></p>
+
+<div class="summary-grid">
+  <div class="card">
+    <h2>{{ counts.total }}</h2>
+    <p>Total</p>
+  </div>
+  <div class="card">
+    <h2>{{ counts.submitted }}</h2>
+    <p>Submitted</p>
+  </div>
+  <div class="card">
+    <h2>{{ counts.under_review }}</h2>
+    <p>Under review</p>
+  </div>
+  <div class="card">
+    <h2>{{ counts.in_progress }}</h2>
+    <p>In progress</p>
+  </div>
+  <div class="card">
+    <h2>{{ counts.resolved }}</h2>
+    <p>Resolved</p>
+  </div>
+</div>
+
+<h2>Recent complaints</h2>
+
+{% if recent %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Category</th>
+      <th>Status</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for complaint in recent %}
+    <tr>
+      <td>{{ complaint.title }}</td>
+      <td>{{ complaint.category.name }}</td>
+      <td><span class="badge badge-{{ complaint.status }}">{{ complaint.get_status_display }}</span></td>
+      <td>{{ complaint.created_at|date:"d M Y" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">You have not submitted any complaints yet.</p>
+{% endif %}
+{% endblock %}

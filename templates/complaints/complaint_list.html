@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}My Complaints - CampusCare{% endblock %}
+
+{% block content %}
+<h1>My Complaints</h1>
+
+<p><a href="{% url 'complaints:create' %}" class="btn">Report a Problem</a></p>
+
+{% if complaints %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Category</th>
+      <th>Location</th>
+      <th>Priority</th>
+      <th>Status</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for complaint in complaints %}
+    <tr>
+      <td><a href="{% url 'complaints:detail' complaint.pk %}">{{ complaint.title }}</a></td>
+      <td>{{ complaint.category.name }}</td>
+      <td>{{ complaint.location }}</td>
+      <td>{{ complaint.get_priority_display }}</td>
+      <td><span class="badge badge-{{ complaint.status }}">{{ complaint.get_status_display }}</span></td>
+      <td>{{ complaint.created_at|date:"d M Y" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">You have not submitted any complaints yet.</p>
+{% endif %}
+{% endblock %}
